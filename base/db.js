@@ -92,6 +92,7 @@ module.exports = (dbConfig, {log, noConvertDbCodes, dbCode, logExecuteTime, logg
                         yield db.commitTransaction(conn);
                         conn.release();
                     } catch (err) {
+                        if(timer) clearTimeout(timer)
                         yield db.rollbackTransaction(conn);
                         conn.release();
                         conn.destroy();
