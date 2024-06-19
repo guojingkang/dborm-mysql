@@ -74,16 +74,18 @@ module.exports = (dbConfig, {log, noConvertDbCodes, dbCode, logExecuteTime, logg
 
                     let conn = yield db.beginTransaction(newOptions);
                     let result;
+                    let timer;
                     try {
                         params[nth] = conn;
                         result = yield Promise.race([
                             fn.apply(ctx, params),
                             new Promise((res) => {
-                                setTimeout(() => {
+                                timer = setTimeout(() => {
                                     res(Message);
                                 }, timeout || 50000);
                             })
                         ]);
+                        if(timer) clearTimeout(timer)
                         if(result === Message){
                             throw new Error(result);
                         }
